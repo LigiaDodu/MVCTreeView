@@ -1,0 +1,68 @@
+﻿@model List<ProfileTreeViewItem>
+@using System.Web.UI.WebControls
+@using TreeView.Models;
+ 
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Tree View </h2>
+<link href="~/Content/jsTree/themes/default/style.min.css" rel="stylesheet" />
+<div class="form-body">
+    <div id="jstree">
+        @(Html.TreeView(Model)
+                          .EmptyContent("root")
+                          .Children(m => m.Childrens)
+                          .HtmlAttributes(new { id = "tree" })
+                      .ChildrenHtmlAttributes(new { @class = "subItem" })
+                          .ItemText(m => m.Root.Name)
+                          .ItemTemplate(
+                         @<text>
+                            <a href="@item.Root.Id" desc="@item.Root.Name">@item.Root.Name</a>
+                        </text>)
+                        )
+    </div>
+</div>
+@section scripts
+{
+    <script src="~/Scripts/jsTree3/jstree.min.js"></script>
+    <script>
+
+        $(function () {
+            var selectedData;
+            $('#jstree').jstree({
+                "core": {
+                    "multiple": false,
+                    "check_callback": false,
+                    'themes': {
+                        "responsive": true,
+                        'variant': 'larg',
+                        'stripes': false,
+                        'dots': false
+                    }
+                },
+                "types": {
+                    "default": {
+                        "icon": "fa fa-folder icon-state-warning icon-lg"
+                    },
+                    "file": {
+                        "icon": "fa fa-file icon-state-warning icon-lg"
+                    }
+                },
+                "plugins": ["dnd", "state", "types",  "checkbox"]
+            });
+
+            $('#jstree')
+            .on("changed.jstree", function (e, data) {
+                debugger;
+                //
+                if (typeof data.node !== "undefined" && typeof data.node.a_attr !== "undefined")
+                {
+                    console.log("Name:" + data.node.a_attr.desc + " id : " + data.node.a_attr.href);
+                }
+                //console.log(data.node.a_attr.desc);
+            })
+        });
+    </script>
+}   
